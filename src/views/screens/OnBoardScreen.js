@@ -20,7 +20,7 @@ const OnBoardScreen = ({navigation}) => {
       <View style={style.textContainer}>
         <View>
           <Text style={{fontSize: 32, fontWeight: 'bold', textAlign: 'center'}}>
-            Delicious Food
+            غذای خوش مزه
           </Text>
           <Text
             style={{
@@ -29,7 +29,7 @@ const OnBoardScreen = ({navigation}) => {
               textAlign: 'center',
               color: COLORS.grey,
             }}>
-            We help you to find best and delicious food
+            به شما کمک میکنیم بهترین و خوش مزه ترین غذا رو پیدا کنید!
           </Text>
         </View>
         <View style={style.indicatorContainer}>
@@ -39,7 +39,7 @@ const OnBoardScreen = ({navigation}) => {
         </View>
         <PrimaryButton
           onPress={() => navigation.navigate('Home')}
-          title="Get Started"
+          title="شروع"
         />
       </View>
     </SafeAreaView>
