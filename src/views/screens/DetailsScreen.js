@@ -22,7 +22,7 @@ const DetailsScreen = ({navigation, route}) => {
             alignItems: 'center',
             height: 280,
           }}>
-          <Image source={item.image} style={{height: 220, width: 220}} />
+          <Image source={{uri: item.image}} style={{height: 220, width: 220}} />
         </View>
         <View style={style.details}>
           <View
@@ -46,7 +46,13 @@ const DetailsScreen = ({navigation, route}) => {
             and scrambled it to make a type specimen book. It has survived not
             only five centuries.
           </Text>
-          <View style={{marginTop: 40, marginBottom: 40}}>
+          <View
+            style={{
+              marginTop: 40,
+              marginBottom: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <SecondaryButton
               title="اضافه به سبد خرید"
               onPress={() => dispatch(addtocart(item))}

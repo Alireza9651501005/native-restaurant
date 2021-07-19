@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Dimensions,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -9,138 +8,44 @@ import {
 } from 'react-native';
 import {
   FlatList,
-  ScrollView,
   TextInput,
-  TouchableHighlight,
-  TouchableOpacity,
 } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import COLORS from '../../consts/colors';
-import categories from '../../consts/categories';
 import foods from '../../consts/foods';
-import {Badge} from 'react-native-elements';
-import {useSelector, useDispatch} from 'react-redux';
-import {addtocart} from '../../redux/action';
-const {width} = Dimensions.get('screen');
-const cardWidth = width / 2 - 20;
+
+import Card from '../components/Card';
+import {
+  useDeviceOrientation,
+} from '@react-native-community/hooks';
+
+import ListCategories from '../components/ListCategories';
 
 const HomeScreen = ({navigation}) => {
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
-
-  const ListCategories = () => {
-    return (
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={style.categoriesListContainer}>
-        {categories.map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            activeOpacity={0.8}
-            onPress={() => setSelectedCategoryIndex(index)}>
-            <View
-              style={{
-                backgroundColor:
-                  selectedCategoryIndex == index
-                    ? COLORS.primary
-                    : COLORS.secondary,
-                ...style.categoryBtn,
-              }}>
-              <View style={style.categoryBtnImgCon}>
-                <Image
-                  source={category.image}
-                  style={{height: 35, width: 35, resizeMode: 'cover'}}
-                />
-              </View>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: 'bold',
-                  marginLeft: 10,
-                  color:
-                    selectedCategoryIndex == index
-                      ? COLORS.white
-                      : COLORS.primary,
-                }}>
-                {category.name}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    );
-  };
-  const Card = ({food}) => {
-    const state = useSelector((state) => state);
-    const dispatch = useDispatch();
-    const newState = state;
-    const newItem = newState.find((e) => e.id === food.id);
-    return (
-      <TouchableHighlight
-        underlayColor={COLORS.white}
-        activeOpacity={0.9}
-        onPress={() => navigation.navigate('DetailsScreen', food)}>
-        <View style={style.card}>
-          <View style={{alignItems: 'center', top: -40}}>
-            <Image source={food.image} style={{height: 120, width: 120}} />
-          </View>
-          <View style={{marginHorizontal: 20}}>
-            <Text style={{fontSize: 18, fontWeight: 'bold'}}>{food.name}</Text>
-            <Text style={{fontSize: 14, color: COLORS.grey, marginTop: 2}}>
-              {food.ingredients}
-            </Text>
-          </View>
-          <View
-            style={{
-              marginTop: 10,
-              marginHorizontal: 20,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-              ${food.price}
-            </Text>
-            <View style={style.addToCartBtn}>
-              <TouchableOpacity onPress={() => dispatch(addtocart(food))}>
-                <Icon name="add" size={20} color={COLORS.white} />
-              </TouchableOpacity>
-              <Badge
-                status="error"
-                value={newItem ? newItem.count : 0}
-                containerStyle={{position: 'absolute', top: -10, left: -15}}
-              />
-            </View>
-          </View>
-        </View>
-      </TouchableHighlight>
-    );
-  };
+  const {portrait} = useDeviceOrientation();
+  
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
+      <View style={{height: 160}}>
       <View style={style.header}>
         <View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 20}}>به رستوران من خوش آمدید!</Text>
-            <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: 10}}>
+          <View style={{flexDirection: 'row', marginLeft: portrait? 0 : 150}}>
+            <Text style={{fontSize: portrait? 18 : 15}}>به رستوران من خوش آمدید!</Text>
+            <Text style={{fontSize: portrait? 18 : 15, fontWeight: 'bold', marginLeft: 10}}>
               سلام
             </Text>
           </View>
-          <Text style={{marginTop: 5, fontSize: 22, color: COLORS.grey}}>
+          {/* <Text style={{marginTop: 5, fontSize: portrait? 20 : 15, color: COLORS.grey}}>
             امروز چی میخوای سفارش بدی ؟!
-          </Text>
+          </Text> */}
         </View>
         <Image
-          source={require('../../assets/person.png')}
+          source={{uri: 'https://p.kindpng.com/picc/s/630-6306130_avatar-avatar-male-user-icon-hd-png-download.png'}}
           style={{height: 50, width: 50, borderRadius: 25}}
         />
       </View>
-      <View
-        style={{
-          marginTop: 40,
-          flexDirection: 'row',
-          paddingHorizontal: 20,
-        }}>
-        <View style={style.inputContainer}>
+      <View style={[style.searchBox, {marginBottom: 10}]}>
+        <View style={[style.inputContainer, {width: portrait ? 200 : 300}]} >
           <Icon name="search" size={28} />
           <TextInput style={{flex: 1, fontSize: 18}} placeholder="جستجوی غذا" />
         </View>
@@ -148,43 +53,59 @@ const HomeScreen = ({navigation}) => {
           <Icon name="tune" size={28} color={COLORS.white} />
         </View>
       </View>
-      <View>
+      <View style={style.constentCards}>
         <ListCategories />
       </View>
+      </View>
+      <View style={style.constentCards}>
       <FlatList
         showsVerticalScrollIndicator={false}
         numColumns={2}
         data={foods}
-        renderItem={({item}) => <Card food={item} />}
+        renderItem={({item}) => <Card food={item} navigation={navigation}/>}
       />
+      </View>
     </SafeAreaView>
   );
 };
 
 const style = StyleSheet.create({
   header: {
-    marginTop: 20,
+    // margin: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    justifyContent: 'space-around',
+    // paddingHorizontal: 100,
   },
-  inputContainer: {
+  constentCards: {
+    justifyContent:'center',
+    alignItems:'center',
     flex: 1,
-    height: 50,
+  },
+
+  inputContainer: {
+    // flex: 1,
+
+    height: 40,
     borderRadius: 10,
     flexDirection: 'row',
     backgroundColor: COLORS.light,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
   },
   sortBtn: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     marginLeft: 10,
     backgroundColor: COLORS.primary,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  searchBox : {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   categoriesListContainer: {
     paddingVertical: 30,
@@ -199,32 +120,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 5,
     flexDirection: 'row',
-  },
-  categoryBtnImgCon: {
-    height: 35,
-    width: 35,
-    backgroundColor: COLORS.white,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card: {
-    height: 220,
-    width: cardWidth,
-    marginHorizontal: 10,
-    marginBottom: 20,
-    marginTop: 50,
-    borderRadius: 15,
-    elevation: 13,
-    backgroundColor: COLORS.white,
-  },
-  addToCartBtn: {
-    height: 30,
-    width: 30,
-    borderRadius: 20,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
